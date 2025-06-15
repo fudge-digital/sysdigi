@@ -22,7 +22,7 @@
                         <img src="{{ asset('storage/Logo-SS-1.png') }}" alt="Logo" class="w-24 mx-auto">
                     </div>
                 </a>
-                <div class="text-lg text-black mt-4">SS DIGISYS</div>
+                <div class="text-lg text-black mt-4">SATRIA SILIWANGI BASKETBALL<p class="text-xs text-gray-500">Digital System Management</p></div>
             </div>
 
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">

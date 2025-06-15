@@ -15,7 +15,7 @@ use App\Http\Controllers\CoachStudentController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', fn () => view('auth.login'));
 Route::post('/logout', [DashboardController::class, 'logout'])->name('logout');
 
 require __DIR__.'/auth.php';

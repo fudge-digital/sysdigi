@@ -100,8 +100,8 @@
     <div class="form-control col-span-2 md:col-span-1 w-full">
         <label class="label text-black text-bold mb-2 w-full">Jenis Kelamin</label>
         <select name="jenis_kelamin" class="select select-neutral w-full">
-            <option value="putra" @selected(old('jenis_kelamin', $profile->jenis_kelamin ?? '') == 'putra')>Putra</option>
-            <option value="putri" @selected(old('jenis_kelamin', $profile->jenis_kelamin ?? '') == 'putri')>Putri</option>
+            <option value="Putra" {{ old('jenis_kelamin', optional($profile)->jenis_kelamin ?? '') === 'Putra' ? 'selected' : '' }}>Putra</option>
+            <option value="Putri" {{ old('jenis_kelamin', optional($profile)->jenis_kelamin ?? '') === 'Putri' ? 'selected' : '' }}>Putri</option>
         </select>
     </div>
 

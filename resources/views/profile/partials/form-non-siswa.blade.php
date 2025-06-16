@@ -89,7 +89,7 @@
 
         @if($profile->photo_profile)
             <div class="mt-4">
-                <img src="{{ asset('storage/' . $profile->photo_profile) }}" class="w-48 h-64 object-cover rounded" />
+                <img src="{{ asset($profile->photo_profile) }}" class="w-48 h-64 object-cover rounded" />
             </div>
         @endif
     </div>

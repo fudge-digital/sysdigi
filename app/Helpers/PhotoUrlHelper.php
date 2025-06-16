@@ -14,7 +14,7 @@ if (!function_exists('photoProfileUrl')) {
             : $user->profile?->photo_profile;
 
         return $path && Storage::disk('public')->exists($path)
-            ? asset('storage/' . $path)
+            ? asset($path)
             : asset('images/default-avatar.png');
     }
 }

@@ -26,9 +26,9 @@ trait HandlesPhotoProfileUpload
         }
 
         // Hapus foto lama jika ada
-        $photoPath = $profile->photo_profile;
-        if ($photoPath && Storage::disk('public')->exists($photoPath)) {
-            Storage::disk('public')->delete($photoPath);
+        $photoPath = public_path($profile->photo_profile);
+        if ($profile->photo_profile && file_exists($photoPath)) {
+            unlink($photoPath);
         }
 
         // Buat nama file unik
@@ -36,12 +36,18 @@ trait HandlesPhotoProfileUpload
         $filename = $filenameBase . '_' . time() . '.' . $file->getClientOriginalExtension();
 
         // Simpan file ke storage
-        $path = $file->storeAs('photo_profiles', $filename, 'public');
+        $destination = public_path('photo_profiles');
+        if (!file_exists($destination)) {
+            mkdir($destination, 0755, true);
+        }
 
-        // Simpan path ke dalam model profil
-        $profile->photo_profile = $path;
+        $file->move($destination, $filename);
+
+        // Simpan path relatif untuk penggunaan asset()
+        $relativePath = 'photo_profiles/' . $filename;
+        $profile->photo_profile = $relativePath;
         $profile->save();
 
-        return $path;
+        return $relativePath;
     }
 }

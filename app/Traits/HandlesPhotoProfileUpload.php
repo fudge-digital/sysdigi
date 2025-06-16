@@ -20,31 +20,36 @@ trait HandlesPhotoProfileUpload
         // Ambil profil sesuai role
         $profile = $user->hasRole('siswa') ? $user->studentProfile : $user->profile;
 
-        // Jika belum ada profil, hentikan proses upload
         if (!$profile) {
             return null;
         }
 
-        // Hapus foto lama jika ada
-        $photoPath = public_path($profile->photo_profile);
-        if ($profile->photo_profile && file_exists($photoPath)) {
-            unlink($photoPath);
-        }
-
         // Buat nama file unik
-        $filenameBase = $user->niss ?? Str::slug($user->name);
+        $filenameBase = $user->niss ?? \Str::slug($user->name);
         $filename = $filenameBase . '_' . time() . '.' . $file->getClientOriginalExtension();
 
-        // Simpan file ke storage
-        $destination = public_path('photo_profiles');
-        if (!file_exists($destination)) {
-            mkdir($destination, 0755, true);
+        // Path tujuan upload
+        $uploadFolder = '/photo_profiles';
+        $destinationPath = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . $uploadFolder;
+
+        // Buat folder jika belum ada
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
         }
 
-        $file->move($destination, $filename);
+        // Hapus file lama jika ada
+        if ($profile->photo_profile) {
+            $oldPath = $destinationPath . '/' . basename($profile->photo_profile);
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+        }
 
-        // Simpan path relatif untuk penggunaan asset()
-        $relativePath = 'photo_profiles/' . $filename;
+        // Simpan file ke folder tujuan
+        $file->move($destinationPath, $filename);
+
+        // Simpan path relatif ke database
+        $relativePath = ltrim($uploadFolder . '/' . $filename, '/');
         $profile->photo_profile = $relativePath;
         $profile->save();
 

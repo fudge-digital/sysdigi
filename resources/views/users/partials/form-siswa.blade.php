@@ -1,4 +1,14 @@
 <div id="formSiswaSection" class="mt-6 hidden p-4 bg-gray-100 rounded grid grid-cols-1 md:grid-cols-2 gap-4">
+    {{-- Foto Profil Upload (Tanpa JavaScript Cropper) --}}
+    <div class="form-control col-span-2 w-full">
+        <label class="label mb-2"><span class="label-text">Foto Profil</span></label>
+
+        <input type="file" name="photo_profile" accept="image/*" class="file-input file-input-bordered w-full" />
+            <div class="mt-4">
+                <img src="{{ photoProfileUrl($user ?? null) }}" class="w-48 h-64 object-cover rounded" />
+            </div>
+    </div>
+    
     {{-- Nama Panggilan --}}
     <div class="form-control col-span-2 md:col-span-1 w-full">
         <label class="label text-black text-bold mb-2 w-full">Nama Panggilan</label>
@@ -84,15 +94,5 @@
     <div class="form-control col-span-1 md:col-span-2 w-full">
         <label class="label text-black text-bold mb-2 w-full">Alamat</label>
         <textarea name="alamat" class="textarea textarea-neutral w-full">{{ old('alamat', $profile->alamat ?? '') }}</textarea>
-    </div>
-
-    {{-- Foto Profil Upload (Tanpa JavaScript Cropper) --}}
-    <div class="form-control col-span-2 w-full">
-        <label class="label mb-2"><span class="label-text">Foto Profil</span></label>
-
-        <input type="file" name="photo_profile" accept="image/*" class="file-input file-input-bordered w-full" />
-            <div class="mt-4">
-                <img src="{{ photoProfileUrl($user ?? null) }}" class="w-48 h-64 object-cover rounded" />
-            </div>
     </div>
 </div>

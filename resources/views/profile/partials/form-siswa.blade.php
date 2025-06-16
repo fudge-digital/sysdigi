@@ -5,7 +5,11 @@
         <label class="label mb-2"><span class="label-text">Foto Profil Saat Ini</span></label>
         <div class="flex items-end mb-2">
             <div class="text-sm text-gray-500 mb-2">
-                <img src="{{ photoProfileUrl($user) }}" class="w-48 h-64 object-cover rounded" />
+                <img src="{{ asset(
+    $user->hasRole('siswa')
+        ? $user->studentProfile->photo_profile ?? 'images/default-avatar.png'
+        : $user->profile->photo_profile ?? 'images/default-avatar.png'
+) }}" class="w-48 h-64 object-cover rounded" />
             </div>
             <div class="text-sm text-gray-500 mb-2 w-full">
                 <input type="file" name="photo_profile" accept="image/*" class="file-input file-input-bordered w-full" />

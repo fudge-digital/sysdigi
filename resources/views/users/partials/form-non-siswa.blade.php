@@ -76,7 +76,11 @@
 
         <input type="file" name="photo_profile" accept="image/*" class="file-input file-input-bordered w-full" />
             <div class="mt-4">
-                <img src="{{ photoProfileUrl($user ?? null) }}" class="w-48 h-64 object-cover rounded" />
+                <img src="{{ asset(
+    $user->hasRole('siswa')
+        ? $user->studentProfile->photo_profile ?? 'images/default-avatar.png'
+        : $user->profile->photo_profile ?? 'images/default-avatar.png'
+) }}" class="w-48 h-64 object-cover rounded" />
             </div>
     </div>
     @endif

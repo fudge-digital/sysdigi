@@ -116,9 +116,9 @@
                                     $photo = null;
 
                                     if (optional($user->studentProfile)->photo_profile) {
-                                        $photo = asset('storage/' . $user->studentProfile->photo_profile);
+                                        $photo = asset($user->studentProfile->photo_profile);
                                     } elseif (optional($user->profile)->photo_profile) {
-                                        $photo = asset('storage/' . $user->profile->photo_profile);
+                                        $photo = asset($user->profile->photo_profile);
                                     } else {
                                         $photo = asset('images/default-avatar.png');
                                     }

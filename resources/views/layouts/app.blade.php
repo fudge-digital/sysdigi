@@ -45,19 +45,5 @@
         @include('layouts.sidebar')
     </div>
     @yield('scripts')
-    
-    @if (session('toast_error'))
-        <div class="toast toast-top toast-end z-50">
-            <div class="alert alert-error">
-                <span>{{ session('toast_error') }}</span>
-            </div>
-        </div>
-
-        <script>
-            setTimeout(() => {
-                document.querySelector('.toast')?.remove();
-            }, 4000); // Toast hilang dalam 4 detik
-        </script>
-    @endif
 </body>
 </html>

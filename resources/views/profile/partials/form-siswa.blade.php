@@ -28,12 +28,11 @@
     </div>
 
     {{-- Tanggal Lahir --}}
-    <!-- <div class="form-control col-span-2 md:col-span-1 w-full">
+    <div class="form-control col-span-2 md:col-span-1 w-full">
         <label class="label text-black text-bold mb-2 w-full">Tanggal Lahir</label>
-        
-    </div> -->
-    <input type="hidden" name="tanggal_lahir" id="tanggalLahir" class="text-input text-input-neutral w-full"
-            value="{{ old('tanggal_lahir', $profile->tanggal_lahir ?? '') }}" {{ auth()->user()->hasRole('siswa') ? 'disabled' : '' }}>
+        <input type="date" name="tanggal_lahir" id="tanggalLahir" class="text-input text-input-neutral w-full"
+            value="{{ old('tanggal_lahir', $profile->tanggal_lahir ?? '') }}">
+    </div>
 
     {{-- Kategori Umur --}}
     <div class="form-control col-span-2 md:col-span-1 w-full">

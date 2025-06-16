@@ -61,8 +61,19 @@
     {{-- Nomor WhatsApp --}}
     <div class="form-control col-span-2 md:col-span-1 w-full">
         <label class="label text-black text-bold mb-2 w-full">Nomor WhatsApp</label>
-        <input type="number" name="nomor_whatsapp" class="text-input text-input-neutral w-full"
-            value="{{ old('nomor_whatsapp', $profile->nomor_whatsapp ?? '') }}">
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center p-3 text-black text-bold border-black bg-gray-200">62</span>
+            <input
+                type="tel"
+                name="nomor_whatsapp"
+                id="nomor_whatsapp_input"
+                class="text-input text-input-neutral w-full pl-12"
+                placeholder=""
+                value="{{ old('nomor_whatsapp', $profile->nomor_whatsapp ? ltrim($profile->nomor_whatsapp, '62') : '') }}"
+            >
+        </div>
+        <div class="flex items-center pr-3 text-gray-500 text-sm">
+                Masukkan tanpa angka 0 (Contoh: 81234567890)</div>
     </div>
 
     {{-- Nomor Jersey --}}
@@ -96,3 +107,25 @@
         <textarea name="alamat" class="textarea textarea-neutral w-full">{{ old('alamat', $profile->alamat ?? '') }}</textarea>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('nomor_whatsapp_input');
+
+        input.addEventListener('input', function () {
+            let val = input.value;
+
+            // Hilangkan semua karakter non-digit
+            val = val.replace(/\D/g, '');
+
+            // Hapus awalan +62, 62, atau 0 jika ada
+            if (val.startsWith('62')) {
+                val = val.substring(2);
+            } else if (val.startsWith('0')) {
+                val = val.substring(1);
+            }
+
+            input.value = val;
+        });
+    });
+</script>

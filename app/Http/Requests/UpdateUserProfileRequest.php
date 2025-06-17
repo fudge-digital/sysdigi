@@ -27,7 +27,7 @@ class UpdateUserProfileRequest extends FormRequest
             'password' => 'nullable|confirmed|min:6',
 
             'nama_panggilan' => 'nullable|string|max:255',
-            'jenis_kelamin' => 'nullable|in:putra,putri',
+            'jenis_kelamin' => 'nullable|in:Putra,Putri',
             'alamat' => 'nullable|string|max:255',
             'tempat_lahir' => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',

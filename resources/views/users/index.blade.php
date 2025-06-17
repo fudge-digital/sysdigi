@@ -3,10 +3,10 @@
 @section('content')
 <div class="p-4">
     <div class="flex justify-between items-center">
-        <div>
+        <div class="w-full md:w-3/5">
             <h1 class="text-2xl font-bold mb-4">Kelola Pengguna</h1>
         </div>
-        <div>
+        <div class="hidden md:block">
             <a href="{{ route('users.create') }}" class="btn btn-sm btn-success text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                 Buat User Baru
@@ -62,9 +62,9 @@
     @endif
 
     <form method="GET" class="flex flex-wrap gap-4 items-end mb-6">
-        <div>
+        <div class="w-full md:w-1/5">
             <label class="label">Role</label>
-            <select name="role" class="select select-bordered">
+            <select name="role" class="select select-bordered w-full">
                 <option value="">Semua</option>
                 @foreach($roles as $role)
                     <option value="{{ $role }}" @selected(request('role') == $role)>
@@ -74,23 +74,88 @@
             </select>
         </div>
 
-        <div>
+        <div class="w-full md:w-1/5">
+            <label class="label">Kelompok Umur & Jenis Kelamin</label>
+            <select name="kategori_umur_jenis_kelamin" class="select select-bordered w-full">
+                <option value="">Semua</option>
+                @foreach($kategoriGenderOptions as $option)
+                    @php
+                        $value = $option->kategori_umur . '|' . $option->jenis_kelamin;
+                    @endphp
+                    <option value="{{ $value }}" @selected(request('kategori_umur_jenis_kelamin') == $value)>
+                        {{ $option->label }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="w-full md:w-1/5">
             <label class="label">Status</label>
-            <select name="status_siswa" class="select select-bordered">
+            <select name="status_siswa" class="select select-bordered w-full">
                 <option value="">Semua</option>
                 <option value="aktif" @selected(request('status_siswa') == 'aktif')>Aktif</option>
                 <option value="tidak aktif" @selected(request('status_siswa') == 'tidak aktif')>Tidak Aktif</option>
             </select>
         </div>
 
-        <div>
+        <div class="w-full md:w-1/5">
             <label class="label">Cari</label>
-            <input type="text" name="search" class="input input-bordered" value="{{ request('search') }}"
+            <input type="text" name="search" class="input input-bordered w-full" value="{{ request('search') }}"
                 placeholder="Nama / NISS / No Jersey / Panggilan">
         </div>
 
         <button class="btn btn-primary">Filter</button>
     </form>
+
+    <div class="block md:hidden mb-4 flex justify-end items-center gap-2">
+        <a href="{{ route('users.create') }}" class="btn btn-sm btn-success text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            Buat User Baru
+        </a>
+        <!-- Trigger Button -->
+        <button class="btn btn-sm btn-neutral" onclick="my_modal_6.showModal()">Import User</button>
+
+        <!-- Modal -->
+        <dialog id="my_modal_6" class="modal modal-bottom sm:modal-middle">
+            <div class="modal-box">
+                <h3 class="text-lg font-bold">Import Siswa</h3>
+
+                {{-- Alert Success --}}
+                @if (session('success'))
+                    <div id="import-success-alert" class="alert alert-success mt-2">
+                        {{ session('success') }}
+                    </div>
+                    <script>
+                        // Refresh halaman setelah 1.5 detik jika sukses
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    </script>
+                @endif
+
+                {{-- Alert Error --}}
+                @if (session('error'))
+                    <div class="alert alert-error mt-2">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                {{-- Form Import --}}
+                <form action="{{ route('users.import.siswa') }}" method="POST" enctype="multipart/form-data" class="py-4">
+                    @csrf
+                    <input type="file" name="file" class="file-input file-input-bordered w-full" required>
+                    <button class="btn btn-primary mt-4">Import Siswa</button>
+                </form>
+
+                <div class="modal-action">
+                    <form method="dialog">
+                        <button class="btn">Close</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+
+    </div>
 
     <div class="overflow-x-auto">
         <table class="table table-zebra w-full">
@@ -100,6 +165,7 @@
                     <th>Nama</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Kategori Umur</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -135,7 +201,15 @@
                         </div>
                     </td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->getRoleNames()->join(', ') }}</td>
+                    <td>{{ $user->getRoleNames()->join(', ') }}</td>                    
+                    <td>
+                        @if($user->hasRole('siswa'))
+                            {{ $user->studentProfile->kategori_umur ?? '-' }} {{ $user->studentProfile->jenis_kelamin ?? '-' }}
+                        @elseif($user->hasRole('pelatih'))
+                            {{ $user->profile->kategori_umur ?? '-' }}
+                        @else
+                            -
+                        @endif
                     <td>
                         <div class="flex gap-2">
                         @if($user->status === 'aktif')

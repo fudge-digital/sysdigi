@@ -23,7 +23,7 @@ trait HandlesUserProfileUpdate
                     'kategori_umur' => $data['kategori_umur'],
                     'asal_sekolah' => $data['asal_sekolah'],
                     'nomor_whatsapp' => $data['nomor_whatsapp'] ?? null,
-                    'nomor_jersey' => $data['nomor_jersey'],
+                    'nomor_jersey' => $data['nomor_jersey'] ?? null,
                     'status_siswa' => $data['status_siswa'],
                 ]
             );

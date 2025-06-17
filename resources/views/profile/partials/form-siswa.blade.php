@@ -7,8 +7,8 @@
             <div class="text-sm text-gray-500 mb-2">
                 <img src="{{ asset(
     $user->hasRole('siswa')
-        ? $user->studentProfile->photo_profile ?? 'images/default-avatar.png'
-        : $user->profile->photo_profile ?? 'images/default-avatar.png'
+        ? $user->studentProfile->photo_profile ?? 'photo_profiles/default-avatar.png'
+        : $user->profile->photo_profile ?? 'photo_profiles/default-avatar.png'
 ) }}" class="w-48 h-64 object-cover rounded" />
             </div>
             <div class="text-sm text-gray-500 mb-2 w-full">

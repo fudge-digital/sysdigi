@@ -32,6 +32,15 @@ class UserManagementController extends Controller
         $query->role($request->role);
     }
 
+     // Filter berdasarkan kategori_umur dan jenis_kelamin gabungan
+    if ($request->filled('kategori_umur_jenis_kelamin')) {
+        [$kategori, $jk] = explode('|', $request->kategori_umur_jenis_kelamin);
+        $query->whereHas('studentProfile', fn ($q) =>
+            $q->where('kategori_umur', $kategori)
+            ->where('jenis_kelamin', $jk)
+    );
+}
+
     // Filter berdasarkan status siswa
     if ($request->filled('status_siswa')) {
         $query->whereHas('studentProfile', fn ($q) =>
@@ -44,11 +53,11 @@ class UserManagementController extends Controller
         $search = $request->search;
         $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%$search%")
-              ->orWhere('niss', 'like', "%$search%")
-              ->orWhereHas('studentProfile', fn($q2) =>
-                  $q2->where('nama_panggilan', 'like', "%$search%")
-                      ->orWhere('nomor_jersey', 'like', "%$search%")
-              );
+            ->orWhere('niss', 'like', "%$search%")
+            ->orWhereHas('studentProfile', fn($q2) =>
+                $q2->where('nama_panggilan', 'like', "%$search%")
+                    ->orWhere('nomor_jersey', 'like', "%$search%")
+            );
         });
     }
 
@@ -57,9 +66,21 @@ class UserManagementController extends Controller
     // Ambil list role dan hitung status siswa
     $roles = Role::pluck('name');
 
+    $kategoriGenderOptions = DB::table('student_profiles')
+        ->select(
+            DB::raw("CONCAT(kategori_umur, ' ', jenis_kelamin) AS label"),
+            'kategori_umur',
+            'jenis_kelamin'
+        )
+        ->distinct()
+        ->orderBy('kategori_umur')
+        ->get();
+
     return view('users.index', compact(
         'users',
         'roles',
+        'kategoriGenderOptions',
+        'request' // Untuk mempertahankan filter saat paginasi
     ));
         
     }
@@ -127,7 +148,7 @@ class UserManagementController extends Controller
     public function edit(User $user)
     {
         $thisUser = auth()->user();
-
+        
         if (!$thisUser->hasAnyRole(['admin', 'manajemen']) && $thisUser->id !== $user->id) {
             abort(403);
         }

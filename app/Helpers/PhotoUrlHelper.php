@@ -6,7 +6,7 @@ if (!function_exists('photoProfileUrl')) {
     function photoProfileUrl($user)
     {
         if (!$user || (!$user->profile && !$user->studentProfile)) {
-            return asset('images/default-profile.png');
+            return asset('photo_profiles/default-profile.png');
         }
 
         $path = $user->hasRole('siswa')
@@ -14,7 +14,7 @@ if (!function_exists('photoProfileUrl')) {
             : $user->profile?->photo_profile;
 
         if (!$path) {
-            return asset('images/default-avatar.png');
+            return asset('photo_profiles/default-avatar.png');
         }
 
         // Check apakah file disimpan di local (storage/public) atau production (public/)
@@ -22,7 +22,7 @@ if (!function_exists('photoProfileUrl')) {
             // Path untuk local (via storage/public)
             return Storage::disk('public')->exists($path)
                 ? asset('storage/' . $path)
-                : asset('images/default-avatar.png');
+                : asset('photo_profiles/default-avatar.png');
         }
 
         // Path untuk hosting (langsung di public/photo_profiles)
@@ -30,6 +30,6 @@ if (!function_exists('photoProfileUrl')) {
 
         return file_exists($fullPath)
             ? asset($path)
-            : asset('images/default-avatar.png');
+            : asset('photo_profiles/default-avatar.png');
     }
 }

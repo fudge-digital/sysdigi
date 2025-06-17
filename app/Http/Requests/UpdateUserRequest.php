@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Helpers\UmurHelper;
+use App\Http\Requests\UpdateUserProfileRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -27,12 +30,12 @@ class UpdateUserRequest extends FormRequest
 
             'role' => 'nullable|string|exists:roles,name',
 
-            'jenis_kelamin' => 'nullable|string|in:putra,putri',
+            'jenis_kelamin' => 'nullable|string|in:Putra,Putri',
             'kelompok_umur' => 'nullable|string|max:255',
             'asal_sekolah'  => 'nullable|string',
-            'nomor_whatsapp' => 'nullable|string|max:20',
             'nama_panggilan' => 'nullable|string',
-            'nomor_jersey'  => 'nullable|int',
+            'nomor_whatsapp' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{9,15}$/'],
+            'nomor_jersey' => 'nullable|string',
             'tinggi_badan'  => 'nullable|int',
             'berat_badan'   => 'nullable|int',
             'alamat'  => 'nullable|string',
@@ -70,6 +73,26 @@ class UpdateUserRequest extends FormRequest
         }
 
         return $data;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('nomor_whatsapp') && $this->filled('nomor_whatsapp')) {
+            $nomor = $this->input('nomor_whatsapp');
+            $nomor = preg_replace('/^(\+62|62|0)/', '', $nomor);
+            $nomor = '62' . $nomor;
+
+            $this->merge([
+                'nomor_whatsapp' => $nomor,
+            ]);
+        }
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }
 

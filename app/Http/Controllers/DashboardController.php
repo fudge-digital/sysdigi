@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\StudentProfile;
 use App\Models\UserProfile;
+use App\Models\Attendance;
 use App\Exports\SiswaExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,7 @@ class DashboardController extends Controller
         } elseif ($user->hasRole('coach')) {
             return redirect()->route('coach.dashboard');
         } elseif ($user->hasRole('siswa')) {
-            return view('dashboards.siswa');
+            return redirect()->route('siswa.dashboard');
         }
 
         abort(403);
@@ -137,6 +138,22 @@ class DashboardController extends Controller
             'totalNonAktif',
             'totalPelatihPerJabatan'
         ));
+    }
+
+    
+    public function siswaDashboard()
+    {
+        $user = auth()->user();
+
+        $attendances = Attendance::with('coach') // jika kamu ingin tampilkan nama coach
+            ->whereHas('students', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('dashboards.siswa', compact('attendances', 'user'));
     }
 
 

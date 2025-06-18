@@ -18,13 +18,11 @@
                         <summary>Absensi</summary>
                         <ul>
                             @if(auth()->user()->hasRole('coach'))
-                            <li><a href="">List Absensi Siswa</a></li>
-                            <li><a href="">List Absen Pribadi</a></li>
-                            <li><a href="">Submit Absen Pelatih</a></li>
+                            <li><a href="{{ route('coach.absensi.index') }}">Riwayat Absensi</a></li>
+                            <li><a href="{{ route('coach.absensi.create') }}">Submit Absen</a></li>
                             @endif
                             @if(auth()->user()->hasRole('siswa'))
-                            <li><a href="">List Absen Pribadi</a></li>
-                            <li><a href="">Submit Absen Siswa</a></li>
+                            <li><a href="{{ route('siswa.absensi.index') }}">Riwayat Absensi</a></li>
                             @endif
                         </ul>
                     </details>

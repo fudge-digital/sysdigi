@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ExportController;
-use App\Http\Controllers\CoachStudentController;
+use App\Http\Controllers\Coach\AttendanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +79,19 @@ Route::post('/users/import-siswa', [UserManagementController::class, 'importSisw
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:coach'])->group(function () {
-    Route::get('/coach/students', [CoachStudentController::class, 'index'])->name('coach.students');
+Route::middleware(['auth', 'role:coach'])->prefix('coach')->name('coach.')->group(function () {
+    Route::get('/absensi/create', [AttendanceController::class, 'create'])->name('absensi.create');
+    Route::post('/absensi', [AttendanceController::class, 'store'])->name('absensi.store');
+    Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi.index');
+    Route::get('absensi/{attendance}', [AttendanceController::class, 'show'])->name('absensi.show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Route khusus untuk role siswa
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:siswa'])->group(function () {
+    Route::get('/absensi', [\App\Http\Controllers\Siswa\AttendanceController::class, 'index'])->name('siswa.absensi.index');
 });

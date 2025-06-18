@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\UserProfile;
 use App\Models\StudentProfile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -130,5 +131,40 @@ class User extends Authenticatable
     public function studentProfile()
     {
         return $this->hasOne(StudentProfile::class);
+    }
+
+    public function handledStudents()
+    {
+        // Ambil kategori umur & jenis kelamin dari tabel pivot
+        $categories = DB::table('coach_student_category')
+            ->where('coach_id', $this->id)
+            ->get()
+            ->map(function ($item) {
+                return [$item->kategori_umur, $item->jenis_kelamin];
+            });
+
+        return User::query()
+            ->role('siswa')
+            ->whereHas('studentProfile', function ($query) use ($categories) {
+                $query->where('status_siswa', 'aktif')
+                    ->where(function ($q) use ($categories) {
+                        foreach ($categories as [$umur, $gender]) {
+                            $q->orWhere(function ($subQ) use ($umur, $gender) {
+                                $subQ->where('kategori_umur', $umur)
+                                    ->where('jenis_kelamin', $gender);
+                            });
+                        }
+                    });
+            });
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'coach_id');
+    }
+
+    public function studentAttendances()
+    {
+        return $this->belongsToMany(Attendance::class, 'attendance_student', 'student_id', 'attendance_id');
     }
 }

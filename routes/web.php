@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/admin', [DashboardController::class, 'adminDashboard'])->middleware('role:admin')->name('admin.dashboard');
     Route::get('/dashboard/coach', [DashboardController::class, 'coachDashboard'])->middleware('role:coach')->name('coach.dashboard');
-    Route::get('/dashboard/siswa', fn () => view('dashboards.siswa'))->middleware('role:siswa')->name('siswa.dashboard');
+    Route::get('/dashboard/siswa', [DashboardController::class, 'siswaDashboard'])->middleware('role:siswa')->name('siswa.dashboard');
 
     // Edit profil pribadi
     Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profile.edit');

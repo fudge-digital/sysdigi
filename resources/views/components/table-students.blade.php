@@ -41,30 +41,63 @@
                     <button onclick="detail_{{$student->id}}.showModal()" class="btn btn-neutral">Lihat Detail</button>
 
                     <!-- Modal -->
-                    <dialog id="detail_{{$student->id}}" class="modal">
-                        <div class="modal-box w-11/12 max-w-5xl m-4">
+                    <dialog id="detail_{{ $student->id }}" class="modal">
+                        <div class="modal-box w-full max-w-5xl">
                             <div class="flex flex-col md:flex-row gap-6">
-                            <!-- FOTO PROFIL -->
-                                <div class="flex-shrink-0 md:w-1/3 w-full">
-                                    <img id="student-photo" src="{{ asset('storage/' . $student->photo_profile) }}" alt="Foto Siswa" class="rounded-lg w-full h-auto object-cover aspect-[3/4] border" />
-                                    <h1>{{ $student->nomor_jersey }}</h1>
+                                <!-- FOTO PROFIL -->
+                                <div class="md:w-1/3 w-full">
+                                    <div class="rounded-lg overflow-hidden shadow-md border aspect-[3/4]">
+                                        <img
+                                            src="{{ asset($student->studentProfile->photo_profile ?? 'photo_profiles/default-avatar.png') }}"
+                                            alt="Foto Siswa"
+                                            class="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <p class="text-center mt-2 text-lg font-semibold text-gray-700">
+                                        #{{ $student->nomor_jersey }}
+                                    </p>
                                 </div>
 
                                 <!-- DETAIL PROFIL -->
-                                <div class="flex-1 space-y-2">
-                                    <h2 class="text-2xl font-semibold" id="student-name">{{ $student->name }}</h2>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                                    <div><span class="font-semibold">NISS:</span> <span id="student-niss">{{ $student->niss }}</span></div>
-                                    <div><span class="font-semibold">Kategori Umur:</span> <span id="student-category">{{ $student->kategori_umur }} {{ $student->jenis_kelamin }}</span></div>
-                                    <div><span class="font-semibold">Tempat Lahir:</span> <span id="student-tempat-lahir">{{ $student->tempat_lahir }}</span></div>
-                                    <div><span class="font-semibold">Tanggal Lahir:</span> <span id="student-tanggal-lahir">{{ $student->tanggal_lahir }}</span></div>
-                                    <div><span class="font-semibold">Sekolah Asal:</span> <span id="student-asal-sekolah">{{ $student->asal_sekolah }}</span></div>
-                                    <div><span class="font-semibold">Tinggi Badan:</span> <span id="student-tinggi-badan">{{ $student->tinggi_badan }}</span> cm</div>
-                                    <div><span class="font-semibold">Berat Badan:</span> <span id="student-berat-badan">{{ $student->berat_badan }}</span> kg</div>
+                                <div class="flex-1 space-y-3">
+                                    <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-2">
+                                        {{ $student->name }}
+                                    </h2>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+                                        <div>
+                                            <span class="font-medium">NISS:</span><br>
+                                            {{ $student->niss }}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Kategori Umur:</span><br>
+                                            {{ $student->kategori_umur }} {{ $student->jenis_kelamin }}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Tempat Lahir:</span><br>
+                                            {{ $student->tempat_lahir }}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Tanggal Lahir:</span><br>
+                                            {{ \Carbon\Carbon::parse($student->tanggal_lahir)->translatedFormat('d F Y') }}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Sekolah Asal:</span><br>
+                                            {{ $student->asal_sekolah }}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Tinggi Badan:</span><br>
+                                            {{ $student->tinggi_badan }} cm
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Berat Badan:</span><br>
+                                            {{ $student->berat_badan }} kg
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Tombol Tutup -->
                             <div class="modal-action mt-6">
                                 <form method="dialog">
                                     <button class="btn btn-neutral">Tutup</button>

@@ -44,6 +44,24 @@
         <!-- Sidebar -->
         @include('layouts.sidebar')
     </div>
-    @yield('scripts')
+    @yield('scripts') @stack('scripts')
+
+    @if(session('success'))
+        <div class="toast toast-top toast-end">
+            <div class="alert alert-success">
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="toast toast-top toast-end">
+            <div class="alert alert-error">
+                <span>{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

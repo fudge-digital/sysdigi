@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="p-4">
-    <h2 class="text-2xl font-bold mb-6">Selamat datang, {{ Auth::user()->name }}</h2>
+    <h2 class="text-2xl font-bold mb-6">Hallo, {{ Auth::user()->name }}</h2>
 
     {{-- CARD PROFILE --}}
     <div class="card bg-base-100 shadow-md">
@@ -13,13 +13,13 @@
 
             {{-- Avatar --}}
             <div class="flex justify-center md:justify-start">
-                <div class="avatar">
-                    <div class="w-32 h-40 rounded-md ring ring-primary ring-offset-base-100 ring-offset-2">
+                <div>
+                    <div class="w-64 h-64 rounded-md ring ring-primary ring-offset-base-100 ring-offset-2">
                         <img src="{{ asset(
     $user->hasRole('siswa')
         ? $user->studentProfile->photo_profile ?? 'photo_profiles/default-avatar.png'
         : $user->profile->photo_profile ?? 'photo_profiles/default-avatar.png'
-) }}" alt="Foto Profil">
+) }}" alt="Foto Profil" class="w-full h-100 object-cover">
                     </div>
                 </div>
             </div>

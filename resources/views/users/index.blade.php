@@ -24,12 +24,6 @@
                         <div id="import-success-alert" class="alert alert-success mt-2">
                             {{ session('success') }}
                         </div>
-                        <script>
-                            // Refresh halaman setelah 1.5 detik jika sukses
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1500);
-                        </script>
                     @endif
 
                     {{-- Alert Error --}}
@@ -223,7 +217,7 @@
                         </div>
                     </td>
                     <td class="flex gap-4 justify-start items-center">
-                        <a href="{{ route('users.show', $user) }}" class="btn btn-sm">
+                        <a href="{{ route('siswa.show', $user) }}" class="btn btn-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
                         </a>
                         <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm">

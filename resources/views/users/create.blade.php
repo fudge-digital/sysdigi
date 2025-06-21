@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+
+@if ($errors->any())
+    <div class="alert alert-error mb-4">
+        <ul class="list-disc list-inside text-sm">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="max-w-4xl mx-auto p-6 bg-base-100 text-black-content rounded">
     <h2 class="text-2xl font-bold mb-6">Tambah User Baru</h2>
 
@@ -26,3 +36,4 @@
 @section('scripts')
     @include('users.partials.script')
 @endsection
+

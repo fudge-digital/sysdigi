@@ -38,6 +38,11 @@ class UpdateUserProfileRequest extends FormRequest
             'nomor_jersey' => 'nullable|string',
             'photo_profile' => 'nullable|image|max:2048',
 
+            'document_kk' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'document_akta' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'document_ijazah' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'document_nisn' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+
             'jabatan' => $isAdmin ? 'nullable|string|max:100' : 'prohibited',
             'lisensi' => 'nullable|string|max:100',
         ];

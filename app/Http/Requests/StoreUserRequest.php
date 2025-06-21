@@ -20,7 +20,7 @@ class StoreUserRequest extends FormRequest
             'email' => 'nullable|email|unique:users,email',
             'password' => 'required|min:6',
             'role' => 'required|exists:roles,name',
-            'jenis_kelamin' => 'nullable|string|in:putra,putri',
+            'jenis_kelamin' => 'nullable|string|in:Putra,Putri',
             'kelompok_umur' => 'nullable|string|max:255',
             'cropped_image' => 'nullable|image|max:2048',
 
@@ -36,6 +36,11 @@ class StoreUserRequest extends FormRequest
             'nomor_jersey' => 'nullable|string|max:10',
             'status_siswa' => 'nullable|string|max:255',
             'photo_profile' => 'nullable|image|max:2048',
+
+            'document_kk' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+            'document_akta' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+            'document_ijazah' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+            'document_nisn' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
 
             'jabatan' => 'nullable|string|max:255',
             'lisensi' => 'nullable|string|max:255',

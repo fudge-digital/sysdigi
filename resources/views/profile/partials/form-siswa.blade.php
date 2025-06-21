@@ -108,8 +108,64 @@
         <label class="label text-black text-bold mb-2 w-full">Alamat</label>
         <textarea name="alamat" class="textarea textarea-neutral w-full">{{ old('alamat', $profile->alamat ?? '') }}</textarea>
     </div>
+
+    @php
+        $currentUser = $user ?? auth()->user();
+        $dokumenData = collect(optional($currentUser?->studentProfile)->documents ?? [])
+            ->keyBy(fn($doc) => strtolower($doc->jenis_dokumen));
+        $isSiswa = $currentUser && $currentUser->hasRole('siswa');
+    @endphp
+
+    <div class="form-control col-span-1 md:col-span-2 gap-6">
+    @foreach(['kk', 'akta', 'ijazah', 'nisn'] as $jenis)
+        @php
+            $dok = $dokumenData[$jenis] ?? null;
+            $url = $dok ? documentUrl($currentUser, $jenis) : null;
+        @endphp
+
+        <div class="mb-6">
+            <label class="label font-semibold">{{ strtoupper($jenis) }}</label>
+
+            {{-- Input File --}}
+            <input type="file"
+                name="document_{{ $jenis }}"
+                class="file-input file-input-bordered w-full"
+                onchange="validateFileWithToast(this, '{{ strtoupper($jenis) }}')" />
+
+            @if($isSiswa && $url)
+                <div class="flex items-center gap-3 mt-2">
+                    <span class="badge badge-success">Sudah diupload</span>
+
+                    {{-- Tombol Lihat --}}
+                    <button type="button"
+                        class="btn btn-sm"
+                        onclick="previewDokumen('{{ $url }}', '{{ strtoupper($jenis) }}')">
+                        Lihat
+                    </button>
+
+                    {{-- Tombol Download --}}
+                    <a href="{{ $url }}" download class="btn btn-sm btn-outline btn-accent">Download</a>
+
+                    {{-- Tombol Hapus hanya render tombol saja --}}
+                    <button type="button"
+                        onclick="hapusDokumen('{{ route('admin.delete_document', [$user->id, $jenis]) }}', '{{ strtoupper($jenis) }}')"
+                        class="btn btn-sm btn-error">
+                        Hapus
+                    </button>
+                </div>
+            @elseif($isSiswa)
+                <div class="mt-2">
+                    <span class="badge badge-error">Belum diupload</span>
+                </div>
+            @endif
+
+            <p class="text-sm text-gray-500 mt-1">Maksimal ukuran file: 5MB</p>
+        </div>
+    @endforeach
+    </div>
 </div>
 
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.getElementById('nomor_whatsapp_input');
@@ -132,4 +188,20 @@
     });
 </script>
 
-
+<script>
+    function validateFileWithToast(input, label) {
+        const file = input.files[0];
+        if (file && file.size > 5 * 1024 * 1024) {
+            input.value = '';
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-top toast-end';
+            toast.innerHTML = `
+                <div class="alert alert-error">
+                    <span>Ukuran file ${label} terlalu besar (maks. 2MB)</span>
+                </div>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+    }
+</script>
+@endpush

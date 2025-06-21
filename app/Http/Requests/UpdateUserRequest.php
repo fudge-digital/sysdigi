@@ -43,6 +43,11 @@ class UpdateUserRequest extends FormRequest
             'tempat_lahir'  => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
 
+            'document_kk' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+            'document_akta' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+            'document_ijazah' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+            'document_nisn' => ['nullable', 'file', 'mimes:pdf,jpg,png', 'max:5120'],
+
             'jabatan' => 'nullable|string|max:100',
             'lisensi' => 'nullable|string|max:100',
         ];

@@ -40,7 +40,8 @@
         },
         "files": [
             "app/Helpers/UmurHelper.php",
-            "app/Helpers/PhotoUrlHelper.php"
+            "app/Helpers/PhotoUrlHelper.php",
+            "app/helpers/DocumentUrlHelper.php"
         ]
     },
     "autoload-dev": {

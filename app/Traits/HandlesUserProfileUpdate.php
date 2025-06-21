@@ -25,6 +25,10 @@ trait HandlesUserProfileUpdate
                     'nomor_whatsapp' => $data['nomor_whatsapp'] ?? null,
                     'nomor_jersey' => $data['nomor_jersey'] ?? null,
                     'status_siswa' => $data['status_siswa'],
+                    'document_kk' => $data['document_kk'] ?? null,
+                    'document_akta' => $data['document_akta'] ?? null,
+                    'document_ijazah' => $data['document_ijazah'] ?? null,
+                    'document_nisn' => $data['document_nisn'] ?? null,
                 ]
             );
         } else {

@@ -34,6 +34,11 @@
                 <div class="flex-1 text-xl font-semibold">
                     @yield('title', 'Dashboard')
                 </div>
+                <div class="flex justify-end p-4">
+                    <label class="cursor-pointer label gap-2">
+                        <input type="checkbox" class="toggle theme-controller toggle-neutral" id="themeToggle" />
+                    </label>
+                </div>
             </div>
 
             <main class="p-4 flex-1">
@@ -62,6 +67,24 @@
         </div>
     @endif
 
+    <script>
+        // Cek localStorage saat halaman pertama dimuat
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById('themeToggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+
+            // Set awal
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            toggle.checked = currentTheme === 'dark';
+
+            // Toggle handler
+            toggle.addEventListener('change', function () {
+                const theme = this.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+        });
+    </script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

@@ -11,45 +11,39 @@ trait HandlesPhotoProfileUpload
 {
     protected function handlePhotoProfileUpload(Request $request, User $user): ?string
     {
-        if (!$request->hasFile('photo_profile')) {
+            if (!$request->hasFile('photo_profile')) {
             return null;
         }
 
         $file = $request->file('photo_profile');
-
-        // Ambil profil sesuai role
         $profile = $user->hasRole('siswa') ? $user->studentProfile : $user->profile;
 
         if (!$profile) {
             return null;
         }
 
-        // Buat nama file unik
         $filenameBase = $user->niss ?? \Str::slug($user->name);
         $filename = $filenameBase . '_' . time() . '.' . $file->getClientOriginalExtension();
 
-        // Path tujuan upload
-        $uploadFolder = '/photo_profiles';
-        $destinationPath = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . $uploadFolder;
+        // Folder upload: public/photo_profiles
+        $uploadFolder = public_path('photo_profiles');
 
-        // Buat folder jika belum ada
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0755, true);
+        // ✅ Buat folder hanya jika belum ada
+        if (!is_dir($uploadFolder)) {
+            mkdir($uploadFolder, 0755, true);
         }
 
         // Hapus file lama jika ada
-        if ($profile->photo_profile) {
-            $oldPath = $destinationPath . '/' . basename($profile->photo_profile);
-            if (file_exists($oldPath)) {
-                unlink($oldPath);
-            }
+        if ($profile->photo_profile && file_exists(public_path($profile->photo_profile))) {
+            unlink(public_path($profile->photo_profile));
         }
 
-        // Simpan file ke folder tujuan
-        $file->move($destinationPath, $filename);
+        // Pindahkan file ke folder tujuan
+        $file->move($uploadFolder, $filename);
 
         // Simpan path relatif ke database
-        $relativePath = ltrim($uploadFolder . '/' . $filename, '/');
+        $relativePath = 'photo_profiles/' . $filename;
+
         $profile->photo_profile = $relativePath;
         $profile->save();
 

@@ -1,78 +1,55 @@
-{{-- Dashboard Siswa --}}
 @extends('layouts.app')
 
 @section('title', 'Dashboard Siswa')
 
 @section('content')
 <div class="p-4">
-    <h2 class="text-2xl font-bold mb-6">Hallo, {{ Auth::user()->name }}</h2>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <h2 class="text-2xl font-bold">Hallo, {{ Auth::user()->name }}</h2>
+        <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+            </svg>
+            Edit Profil
+        </a>
+    </div>
 
     {{-- CARD PROFILE --}}
     <div class="card bg-base-100 shadow-md">
-        <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card-body flex flex-col md:flex-row gap-6">
 
-            {{-- Avatar --}}
-            <div class="flex justify-center md:justify-start">
-                <div>
-                    <div class="w-64 h-64 rounded-md ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src="{{ asset(
-    $user->hasRole('siswa')
-        ? $user->studentProfile->photo_profile ?? 'photo_profiles/default-avatar.png'
-        : $user->profile->photo_profile ?? 'photo_profiles/default-avatar.png'
-) }}" alt="Foto Profil" class="w-full h-100 object-cover">
-                    </div>
+            {{-- Foto dan Jersey --}}
+            <div class="flex flex-col items-center md:items-start md:w-1/3 w-full">
+                <div class="w-64 rounded-md overflow-hidden mx-auto">
+                    <img src="{{ asset(
+                        $user->hasRole('siswa')
+                            ? $user->studentProfile->photo_profile ?? 'photo_profiles/default-avatar.png'
+                            : $user->profile->photo_profile ?? 'photo_profiles/default-avatar.png'
+                    ) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                </div>
+                <div class="mx-auto my-4">
+                    <span class="text-xl font-bold bg-green-500 text-white py-2 px-4 rounded">
+                        {{ Auth::user()->studentProfile?->nomor_jersey }}
+                    </span>
                 </div>
             </div>
 
             {{-- Info Umum --}}
-            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <p class="font-semibold">Nama Lengkap</p>
-                    <p>{{ Auth::user()->name }}</p>
+            <div class="md:w-2/3 w-full">
+                {{-- Untuk mobile gunakan collapsible --}}
+                <div class="block md:hidden">
+                    <div class="collapse collapse-arrow bg-base-200">
+                        <input type="checkbox" />
+                        <div class="collapse-title text-lg font-semibold">Informasi Siswa</div>
+                        <div class="collapse-content">
+                            @include('partials._siswa-info')
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <p class="font-semibold">Nama Panggilan</p>
-                    <p>{{ Auth::user()->studentProfile?->nama_panggilan ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">NISS</p>
-                    <p>{{ Auth::user()->niss }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Email</p>
-                    <p>{{ Auth::user()->email }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Jenis Kelamin</p>
-                    <p>{{ ucfirst(Auth::user()->studentProfile?->jenis_kelamin ?? '-') }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Tanggal Lahir</p>
-                    <p>{{ \Carbon\Carbon::parse(Auth::user()->studentProfile?->tanggal_lahir)->translatedFormat('d F Y') ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Tempat Lahir</p>
-                    <p>{{ Auth::user()->studentProfile?->tempat_lahir ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Alamat</p>
-                    <p>{{ Auth::user()->studentProfile?->alamat ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Asal Sekolah</p>
-                    <p>{{ Auth::user()->studentProfile?->asal_sekolah ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Kategori Umur</p>
-                    <span class="badge badge-info badge-outline">{{ Auth::user()->studentProfile?->kategori_umur ?? '-' }}</span>
-                </div>
-                <div>
-                    <p class="font-semibold">Tinggi Badan</p>
-                    <p>{{ Auth::user()->studentProfile?->tinggi_badan ? Auth::user()->studentProfile->tinggi_badan . ' cm' : '-' }}</p>
-                </div>
-                <div>
-                    <p class="font-semibold">Berat Badan</p>
-                    <p>{{ Auth::user()->studentProfile?->berat_badan ? Auth::user()->studentProfile->berat_badan . ' kg' : '-' }}</p>
+
+                {{-- Untuk desktop langsung tampil --}}
+                <div class="hidden md:grid md:grid-cols-2 gap-4">
+                    @include('partials._siswa-info')
                 </div>
             </div>
         </div>
@@ -81,9 +58,10 @@
     {{-- Riwayat Absen Singkat --}}
     <div class="mt-8">
         <h3 class="text-xl font-semibold mb-4">Riwayat Absensi Terbaru</h3>
+
         @if($attendances->count())
             <div class="overflow-x-auto">
-                <table class="table table-zebra w-full">
+                <table class="table table-zebra w-full text-sm">
                     <thead>
                         <tr>
                             <th>Tanggal</th>

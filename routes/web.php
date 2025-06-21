@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\Coach\AttendanceController;
+use App\Http\Controllers\Admin\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,13 +34,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/admin', [DashboardController::class, 'adminDashboard'])->middleware('role:admin')->name('admin.dashboard');
     Route::get('/dashboard/coach', [DashboardController::class, 'coachDashboard'])->middleware('role:coach')->name('coach.dashboard');
     Route::get('/dashboard/siswa', [DashboardController::class, 'siswaDashboard'])->middleware('role:siswa')->name('siswa.dashboard');
+    Route::get('/dashboard/admin/siswa/{id}', [StudentController::class, 'show'])->middleware(['auth', 'role:admin'])->name('siswa.show');
 
     // Edit profil pribadi
     Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+Route::delete('/profil/document/{jenis}', [ProfileController::class, 'deleteDocument'])
+    ->name('profile.document.delete')
+    ->middleware(['auth']);
 
+Route::delete('/admin/users/{user}/document/{jenis}', [UserManagementController::class, 'deleteDocument'])
+    ->name('admin.delete_document')
+    ->middleware(['auth']);
 /*
 |--------------------------------------------------------------------------
 | Routes untuk user management (admin, manajemen, coach)

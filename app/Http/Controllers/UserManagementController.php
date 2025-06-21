@@ -18,10 +18,11 @@ use Intervention\Image\Facades\Image;
 use App\Traits\HandlesUserProfileUpdate;
 use App\Traits\HandlesPhotoProfileUpload;
 use App\Traits\HandlesCategoryAssignments;
+use App\Traits\HandlesDocumentUpload;
 
 class UserManagementController extends Controller
 {
-    use HandlesCategoryAssignments, HandlesPhotoProfileUpload, HandlesUserProfileUpdate;
+    use HandlesCategoryAssignments, HandlesPhotoProfileUpload, HandlesUserProfileUpdate, HandlesDocumentUpload;
     //
     public function index(Request $request)
     {
@@ -124,7 +125,7 @@ class UserManagementController extends Controller
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
-
+        
         $user = User::create([
             'name' => $data['name'],
             'niss' => $data['niss'],
@@ -142,6 +143,11 @@ class UserManagementController extends Controller
 
         $this->updateUserProfile($user, $data);
 
+        // Upload dokumen siswa jika ada
+        if ($user->hasRole('siswa')) {
+            $this->handleStudentDocumentsUpload($request, $user);
+        }
+
         return redirect()->route('users.index')->with('success', 'User berhasil dibuat!');
     }
 
@@ -152,6 +158,8 @@ class UserManagementController extends Controller
         if (!$thisUser->hasAnyRole(['admin', 'manajemen']) && $thisUser->id !== $user->id) {
             abort(403);
         }
+
+        $user->load('profile', 'studentProfile');
 
         $roles = Role::all();
         $profile = $user->hasRole('siswa') ? $user->studentProfile : $user->profile;
@@ -218,6 +226,10 @@ class UserManagementController extends Controller
 
         // Update profile
         $this->updateUserProfile($user, $data);
+        
+        if ($user->hasRole('siswa') && $user->studentProfile) {
+            $this->handleStudentDocumentsUpload($request, $user);
+        }
 
         // Jika coach dan admin mengirimkan handled_categories
         if (
@@ -229,6 +241,27 @@ class UserManagementController extends Controller
         }
 
         return redirect()->route('users.index')->with('success', 'User updated!');
+    }
+
+    public function deleteDocument(User $user, string $jenis)
+    {
+        $studentProfile = $user->studentProfile;
+
+        $dokumen = $studentProfile->documents()
+            ->where('jenis_dokumen', strtoupper($jenis))
+            ->first();
+
+        if ($dokumen) {
+            // Hapus file fisik
+            if (Storage::disk('public')->exists($dokumen->file_path)) {
+                Storage::disk('public')->delete($dokumen->file_path);
+            }
+
+            // Hapus database
+            $dokumen->delete();
+        }
+
+        return back()->with('success', "Dokumen {$jenis} berhasil dihapus");
     }
 
     public function destroy(User $user)

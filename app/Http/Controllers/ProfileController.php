@@ -13,10 +13,11 @@ use App\Traits\HandlesUserProfileUpdate;
 use App\Traits\HandlesPhotoProfileUpload;
 use App\Traits\HandlesCategoryAssignments;
 use App\Traits\HandlesProtectedFields;
+use App\Traits\HandlesDocumentUpload;
 
 class ProfileController extends Controller
 {
-    use HandlesCategoryAssignments, HandlesPhotoProfileUpload, HandlesUserProfileUpdate, HandlesProtectedFields;
+    use HandlesCategoryAssignments, HandlesPhotoProfileUpload, HandlesUserProfileUpdate, HandlesDocumentUpload, HandlesProtectedFields;
 
     public function edit(User $user)
     {
@@ -58,7 +59,7 @@ class ProfileController extends Controller
     }
 
     public function update(UpdateUserProfileRequest $request)
-    {
+    {   
         $user = auth()->user();
 
         $this->authorizeEdit($user, $user);
@@ -83,11 +84,29 @@ class ProfileController extends Controller
         // Update profile (siswa / non-siswa)
         $this->updateUserProfile($user, $data);
 
-        // Hanya coach yang bisa sinkron handled_categories, tapi TIDAK bisa edit sendiri
-        // handled_categories hanya bisa dibaca untuk ditampilkan di dashboard
-        // Jadi tidak perlu proses simpan handled_categories di sini
+        $this->handleStudentDocumentsUpload($request, $user);
 
         return redirect()->back()->with('success', 'Profil berhasil diperbarui');
+    }
+
+    public function deleteDocument(string $jenis)
+    {
+        $user = auth()->user();
+
+        if (!$user->hasRole('siswa')) {
+            abort(403);
+        }
+
+        $doc = $user->studentProfile->documents()
+            ->where('jenis_dokumen', strtolower($jenis))
+            ->first();
+
+        if ($doc) {
+            Storage::disk('public')->delete($doc->file_path);
+            $doc->delete();
+        }
+
+        return redirect()->back()->with('success', 'Dokumen berhasil dihapus.');
     }
 
     protected function updateBasicInfo(User $user, array $data): void

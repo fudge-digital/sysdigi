@@ -5,31 +5,35 @@ use Illuminate\Support\Facades\Storage;
 if (!function_exists('photoProfileUrl')) {
     function photoProfileUrl($user)
     {
-        if (!$user || (!$user->profile && !$user->studentProfile)) {
-            return asset('photo_profiles/default-profile.png');
+        $default = 'photo_profiles/default-avatar.png';
+
+        if (!$user) {
+            return asset($default);
         }
 
-        $path = $user->hasRole('siswa')
-            ? $user->studentProfile?->photo_profile
-            : $user->profile?->photo_profile;
+        // Ambil path dari studentProfile atau profile
+        $path = null;
+        if ($user->hasRole('siswa')) {
+            $path = optional($user->studentProfile)->photo_profile;
+        } else {
+            $path = optional($user->profile)->photo_profile;
+        }
 
         if (!$path) {
-            return asset('photo_profiles/default-avatar.png');
+            return asset($default);
         }
 
-        // Check apakah file disimpan di local (storage/public) atau production (public/)
+        // Jika di local: file di simpan via Storage
         if (app()->environment('local')) {
-            // Path untuk local (via storage/public)
-            return Storage::disk('public')->exists($path)
-                ? asset('storage/' . $path)
-                : asset('photo_profiles/default-avatar.png');
+            $fullPath = public_path($path);
+            return file_exists($fullPath)
+                ? asset($path)
+                : asset($default);
         }
 
-        // Path untuk hosting (langsung di public/photo_profiles)
-        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($path, '/');
-
-        return file_exists($fullPath)
+        // Jika di production: file langsung ada di public/
+        return file_exists(public_path($path))
             ? asset($path)
-            : asset('photo_profiles/default-avatar.png');
+            : asset($default);
     }
 }

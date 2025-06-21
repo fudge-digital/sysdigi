@@ -51,6 +51,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'student_document' => [
+            'driver' => 'local',
+            'root' => public_path('student_documents'),
+            'url' => env('APP_URL') . '/student_documents',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
